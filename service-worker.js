@@ -1,4 +1,4 @@
-const CACHE_NAME = 'palacio-em-letras-v1';
+const CACHE_NAME = 'palacio-em-letras-v2';
 const APP_SHELL = [
   './',
   './index.html',

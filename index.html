@@ -13,16 +13,19 @@
 </head>
 <body>
   <header class="site-header">
-    <img class="logo" src="logo.png" alt="República Portuguesa, Museus e Monumentos de Portugal e Museu dos Biscainhos">
-    <p class="section-label">Serviço Educativo</p>
+    <div>
+      <p class="site-kicker">Museu dos Biscainhos · Serviço Educativo</p>
+      <h1>Palácio em letras</h1>
+    </div>
+    <p class="section-label">Jogo educativo</p>
   </header>
 
   <main id="main">
     <section class="intro-panel">
       <div class="intro-copy">
         <p class="eyebrow">ATIVIDADE PARA EXPLORADORES</p>
-        <h1>Palácio em letras</h1>
-        <p>Descobre os espaços, artes e memórias do Museu dos Biscainhos.</p>
+        <h2 id="level-title">Nível 1 · Primeiros passos</h2>
+        <p id="level-description">Descobre os espaços, artes e memórias do Museu dos Biscainhos em linhas horizontais e verticais.</p>
       </div>
       <div class="hero-art" role="img" aria-label="Fachada do Museu dos Biscainhos"></div>
     </section>
@@ -36,6 +39,11 @@
         <div class="panel-heading">
           <p class="eyebrow">DESAFIO</p>
           <h2>Encontra as palavras</h2>
+        </div>
+        <div id="levels" class="levels" aria-label="Níveis de dificuldade">
+          <button type="button" class="level-button is-active" data-level="0">1</button>
+          <button type="button" class="level-button" data-level="1">2</button>
+          <button type="button" class="level-button" data-level="2">3</button>
         </div>
         <ul id="words" aria-label="Palavras a encontrar">
           <li><input class="word" value="BISCAINHOS" readonly aria-label="Biscainhos"></li>
@@ -60,6 +68,8 @@
           <button id="solve" type="button" class="secondary">Ver solução</button>
           <button id="fullscreen" type="button" class="secondary">Ecrã inteiro</button>
           <button id="install-app" type="button" class="secondary">Instalar app</button>
+          <button id="sound" type="button" class="secondary" aria-pressed="true">Som: ligado</button>
+          <button id="next-level" type="button" class="secondary">Próximo nível</button>
         </div>
       </aside>
     </section>
@@ -67,14 +77,36 @@
     <p class="hint">As palavras podem surgir na horizontal, vertical ou diagonal.</p>
   </main>
 
-  <footer>Descobre, observa, imagina. <span>Museu dos Biscainhos · Braga</span></footer>
+  <footer>
+    <img class="footer-logo" src="logo.png" alt="República Portuguesa, Museus e Monumentos de Portugal e Museu dos Biscainhos">
+    <p>Descobre, observa, imagina. <span>Museu dos Biscainhos · Braga</span></p>
+  </footer>
 
   <script src="jquery-1.7.1.min.js"></script>
   <script src="wordfind.js"></script>
   <script src="wordfindgame.js"></script>
   <script>
     let game;
+    let currentLevel = 0;
+    let soundEnabled = localStorage.getItem('palacio-em-letras-sound') !== 'off';
     const foundWords = new Set();
+    const levels = [
+      {
+        title: 'Nível 1 · Primeiros passos',
+        description: 'Encontra palavras em linhas horizontais e verticais.',
+        orientations: ['horizontal', 'vertical']
+      },
+      {
+        title: 'Nível 2 · Olhar atento',
+        description: 'Agora as palavras também podem surgir na diagonal.',
+        orientations: ['horizontal', 'vertical', 'diagonal', 'diagonalBack']
+      },
+      {
+        title: 'Nível 3 · Mestre explorador',
+        description: 'Todas as direções são possíveis, incluindo palavras invertidas.',
+        orientations: ['horizontal', 'horizontalBack', 'vertical', 'verticalUp', 'diagonal', 'diagonalBack', 'diagonalUp', 'diagonalUpBack']
+      }
+    ];
     const facts = {
       biscainhos: 'O palácio começou a formar-se no século XVII e evoluiu ao longo dos séculos XVIII e XIX.',
       palacio: 'O próprio edifício é a peça central do programa museográfico do Museu dos Biscainhos.',
@@ -93,17 +125,48 @@
       $('#progress').text(`${foundWords.size} de ${total} palavras encontradas`);
     }
 
+    function playNotes(notes) {
+      if (!soundEnabled || !window.AudioContext && !window.webkitAudioContext) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      const context = new AudioContext();
+      const start = context.currentTime;
+      notes.forEach(function (note, index) {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = note;
+        gain.gain.setValueAtTime(.0001, start + index * .11);
+        gain.gain.exponentialRampToValueAtTime(.12, start + index * .11 + .02);
+        gain.gain.exponentialRampToValueAtTime(.0001, start + index * .11 + .2);
+        oscillator.connect(gain).connect(context.destination);
+        oscillator.start(start + index * .11);
+        oscillator.stop(start + index * .11 + .22);
+      });
+      setTimeout(function () { context.close(); }, notes.length * 120 + 250);
+    }
+
+    function updateLevelUI() {
+      const level = levels[currentLevel];
+      $('#level-title').text(level.title);
+      $('#level-description').text(level.description);
+      $('.level-button').removeClass('is-active').filter('[data-level="' + currentLevel + '"]').addClass('is-active');
+      $('#next-level').text(currentLevel < levels.length - 1 ? 'Próximo nível' : 'Todos concluídos');
+    }
+
     function showDiscovery(word) {
       if (foundWords.has(word)) return;
       foundWords.add(word);
       $('#discovery-text').text(facts[word] || 'Descobriste mais um elemento do Museu dos Biscainhos.');
       $('#discovery-card').addClass('is-visible');
       updateProgress();
+      playNotes([523, 659]);
     }
 
     function completePuzzle() {
       $('#result-message').text('Parabéns! Descobriste os segredos do Palácio dos Biscainhos.').removeClass('error');
       $('#puzzle').addClass('is-complete');
+      if (currentLevel < levels.length - 1) $('#next-level').addClass('is-available');
+      playNotes([523, 659, 784, 1047]);
     }
 
     function recreate() {
@@ -112,6 +175,7 @@
       $('#discovery-card').removeClass('is-visible');
       $('#discovery-text').text('Encontra uma palavra para revelar uma curiosidade sobre o Palácio dos Biscainhos.');
       $('#puzzle').removeClass('is-complete');
+      $('#next-level').removeClass('is-available');
       $('#result-message').text('Boa descoberta!').removeClass('error');
       try {
         game = new WordFindGame('#puzzle', {
@@ -119,6 +183,7 @@
           maxGridGrowth: 10,
           fillBlanks: true,
           maxAttempts: 300,
+          orientations: levels[currentLevel].orientations,
           onWordFound: showDiscovery,
           onComplete: completePuzzle
         });
@@ -130,6 +195,24 @@
     recreate();
     $('#new-puzzle').on('click', recreate);
     $('#solve').on('click', function () { game.solve(); });
+    $('.level-button').on('click', function () {
+      currentLevel = Number($(this).data('level'));
+      updateLevelUI();
+      recreate();
+    });
+    $('#next-level').on('click', function () {
+      if (currentLevel < levels.length - 1) {
+        currentLevel += 1;
+        updateLevelUI();
+        recreate();
+      }
+    });
+    $('#sound').on('click', function () {
+      soundEnabled = !soundEnabled;
+      localStorage.setItem('palacio-em-letras-sound', soundEnabled ? 'on' : 'off');
+      $(this).attr('aria-pressed', soundEnabled).text(soundEnabled ? 'Som: ligado' : 'Som: desligado');
+      if (soundEnabled) playNotes([523]);
+    });
     $('#fullscreen').on('click', function () {
       if (document.fullscreenElement) {
         document.exitFullscreen();
@@ -162,6 +245,8 @@
         navigator.serviceWorker.register('service-worker.js');
       });
     }
+    updateLevelUI();
+    $('#sound').attr('aria-pressed', soundEnabled).text(soundEnabled ? 'Som: ligado' : 'Som: desligado');
   </script>
 </body>
 </html>

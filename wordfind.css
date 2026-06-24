@@ -26,15 +26,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 4.75rem;
-  padding: .7rem clamp(1.25rem, 4vw, 4rem);
-  color: var(--ink);
-  background: #fffefa;
-  border-top: .45rem solid var(--red);
-  border-bottom: 1px solid var(--line);
+  min-height: 6.2rem;
+  padding: .9rem clamp(1.25rem, 4vw, 4rem);
+  color: #fffefa;
+  background: var(--red);
+  border-bottom: 1px solid var(--red-dark);
 }
-.logo { display: block; width: min(42rem, 68vw); max-height: 3.2rem; object-fit: contain; object-position: left center; }
-.section-label { margin: 0; color: var(--red); font-size: .68rem; font-weight: bold; letter-spacing: .14em; text-align: right; text-transform: uppercase; }
+.site-kicker { margin: 0 0 .25rem; color: #f1d895; font-size: .64rem; font-weight: bold; letter-spacing: .14em; text-transform: uppercase; }
+.site-header h1 { margin: 0; font: normal clamp(1.85rem, 4vw, 3rem) Georgia, 'Times New Roman', serif; }
+.section-label { margin: 0; color: #f1d895; font-size: .68rem; font-weight: bold; letter-spacing: .14em; text-align: right; text-transform: uppercase; }
 
 #main { max-width: 84rem; margin: 0 auto; padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 1.6rem; }
 .intro-panel { display: grid; min-height: 9.5rem; color: var(--paper); background: var(--red); }
@@ -83,6 +83,9 @@ h1 { margin-bottom: .45rem; font: normal clamp(2rem, 4.5vw, 3.7rem) Georgia, 'Ti
 .panel-heading { padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
 .panel-heading .eyebrow { margin-bottom: .35rem; }
 h2 { margin-bottom: 0; font: normal clamp(1.5rem, 3vw, 2.15rem) Georgia, 'Times New Roman', serif; }
+.levels { display: flex; gap: .45rem; margin: .9rem 0 .2rem; }
+.level-button { display: grid; width: 2rem; min-height: 2rem; padding: 0; color: var(--ink); background: transparent; border-color: var(--line); border-radius: 50%; font-size: .75rem; place-items: center; }
+.level-button.is-active, .level-button:hover { color: #fff; background: var(--red); border-color: var(--red); }
 #words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 1rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 #words li { min-width: 0; }
 input.word { width: 100%; padding: .45rem 0; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid #dfd7ca; font: bold clamp(.7rem, 1.7vw, .85rem) Arial, sans-serif; letter-spacing: .055em; }
@@ -107,8 +110,12 @@ button.secondary { color: var(--ink); background: transparent; border-color: var
 button.secondary:hover { color: #fff; background: var(--red-dark); border-color: var(--red-dark); }
 #install-app { display: none; }
 #install-app.is-available { display: block; }
+#next-level { display: none; }
+#next-level.is-available { display: block; }
 .hint { margin: 1rem 0 0; color: #68645c; text-align: center; font: italic .92rem Georgia, serif; }
-footer { padding: 1.25rem; color: #f7eee2; text-align: center; background: var(--red); font: italic 1rem Georgia, serif; }
+footer { padding: 1.75rem 1.25rem 1.25rem; color: var(--ink); text-align: center; background: #fffefa; border-top: 1px solid var(--line); font: italic 1rem Georgia, serif; }
+.footer-logo { display: block; width: min(42rem, 86vw); max-height: 4rem; margin: 0 auto 1.1rem; object-fit: contain; }
+footer p { margin: 0; }
 footer span { margin-left: .4rem; color: var(--gold); font-size: .82rem; }
 
 #puzzle.is-complete { animation: celebrate .6s ease-out; }
@@ -128,8 +135,24 @@ footer span { margin-left: .4rem; color: var(--gold); font-size: .82rem; }
 }
 
 @media (max-width: 390px) {
-  .site-header { min-height: 3.4rem; }
+  .site-header { min-height: 4.7rem; }
   .section-label { display: none; }
   #words { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 699px) {
+  #main { padding: .75rem; }
+  .site-header { align-items: center; }
+  .section-label { display: none; }
+  .intro-panel { min-height: 0; }
+  .intro-copy { padding: 1.2rem 1.3rem; }
+  .hero-art { min-height: 9rem; }
+  .game-card { gap: 1.1rem; margin-top: .75rem; padding: 1rem; }
+  .actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .puzzleSquare { width: clamp(1.85rem, 8vw, 2.45rem); height: clamp(1.85rem, 8vw, 2.45rem); }
+}
+
+@media (max-width: 390px) {
   .actions { grid-template-columns: 1fr; }
 }
