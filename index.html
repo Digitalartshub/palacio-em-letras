@@ -33,7 +33,13 @@
     <section class="game-card" aria-label="Sopa de letras">
       <div class="board-panel">
         <p class="board-instruction">Toca e arrasta para assinalar uma palavra.</p>
-        <div id="puzzle" aria-label="Tabuleiro da sopa de letras"></div>
+        <div class="puzzle-frame">
+          <span class="frame-corner top-left" aria-hidden="true">❦</span>
+          <span class="frame-corner top-right" aria-hidden="true">❦</span>
+          <span class="frame-corner bottom-left" aria-hidden="true">❦</span>
+          <span class="frame-corner bottom-right" aria-hidden="true">❦</span>
+          <div id="puzzle" aria-label="Tabuleiro da sopa de letras"></div>
+        </div>
       </div>
       <aside class="word-panel">
         <div class="panel-heading">
@@ -79,7 +85,7 @@
 
   <footer>
     <img class="footer-logo" src="logo.png" alt="República Portuguesa, Museus e Monumentos de Portugal e Museu dos Biscainhos">
-    <p>Descobre, observa, imagina. <span>Museu dos Biscainhos · Braga</span></p>
+    <p>Descobre, observa, imagina. <span>Museu dos Biscainhos · Braga</span> <a href="creditos.html">Créditos musicais</a></p>
   </footer>
 
   <script src="jquery-1.7.1.min.js"></script>
@@ -89,23 +95,34 @@
     let game;
     let currentLevel = 0;
     let soundEnabled = localStorage.getItem('palacio-em-letras-sound') !== 'off';
+    const completionAudio = new Audio();
+    let musicTimer;
     const foundWords = new Set();
     const levels = [
       {
         title: 'Nível 1 · Primeiros passos',
         description: 'Encontra palavras em linhas horizontais e verticais.',
-        orientations: ['horizontal', 'vertical']
+        orientations: ['horizontal', 'vertical'],
+        words: ['braga', 'jardins', 'cozinha', 'salao']
       },
       {
         title: 'Nível 2 · Olhar atento',
         description: 'Agora as palavras também podem surgir na diagonal.',
-        orientations: ['horizontal', 'vertical', 'diagonal', 'diagonalBack']
+        orientations: ['horizontal', 'vertical', 'diagonal', 'diagonalBack'],
+        words: ['palacio', 'azulejaria', 'escultura']
       },
       {
         title: 'Nível 3 · Mestre explorador',
         description: 'Todas as direções são possíveis, incluindo palavras invertidas.',
-        orientations: ['horizontal', 'horizontalBack', 'vertical', 'verticalUp', 'diagonal', 'diagonalBack', 'diagonalUp', 'diagonalUpBack']
+        orientations: ['horizontal', 'horizontalBack', 'vertical', 'verticalUp', 'diagonal', 'diagonalBack', 'diagonalUp', 'diagonalUpBack'],
+        words: ['biscainhos', 'cavalarica', 'cocheira']
       }
+    ];
+    const levelMusic = [
+      { src: 'bach-cello-suite-1.ogg', title: 'J. S. Bach — Suite para Violoncelo n.º 1, Prelúdio' },
+      { src: 'handel-water-music.ogg', title: 'G. F. Handel — Water Music' },
+      { src: 'bach-brandenburg-3.ogg', title: 'J. S. Bach — Concerto de Brandemburgo n.º 3' },
+      { src: 'vivaldi-spring.ogg', title: 'A. Vivaldi — A Primavera, de As Quatro Estações' }
     ];
     const facts = {
       biscainhos: 'O palácio começou a formar-se no século XVII e evoluiu ao longo dos séculos XVIII e XIX.',
@@ -123,6 +140,19 @@
     function updateProgress() {
       const total = $('input.word').length;
       $('#progress').text(`${foundWords.size} de ${total} palavras encontradas`);
+    }
+
+    function renderWords() {
+      const levelWords = levels[currentLevel].words;
+      $('#words').empty();
+      levelWords.forEach(function (word) {
+        $('<li><input class="word" readonly></li>')
+          .find('input')
+          .val(word.toUpperCase())
+          .attr('aria-label', word)
+          .end()
+          .appendTo('#words');
+      });
     }
 
     function playNotes(notes) {
@@ -143,6 +173,35 @@
         oscillator.stop(start + index * .11 + .22);
       });
       setTimeout(function () { context.close(); }, notes.length * 120 + 250);
+    }
+
+    function stopCompletionMusic() {
+      clearTimeout(musicTimer);
+      completionAudio.pause();
+      completionAudio.currentTime = 0;
+    }
+
+    function playCompletionMusic() {
+      if (!soundEnabled) return;
+      const playlist = currentLevel === levels.length - 1
+        ? [levelMusic[2], levelMusic[3]]
+        : [levelMusic[currentLevel]];
+      let trackIndex = 0;
+      stopCompletionMusic();
+      function playNextTrack() {
+        const track = playlist[trackIndex];
+        const duration = trackIndex === 0 && playlist.length > 1 ? 12000 : 20000;
+        completionAudio.src = track.src;
+        completionAudio.volume = .42;
+        completionAudio.play().catch(function () {});
+        $('#result-message').text('Parabéns! A ouvir: ' + track.title + '.').removeClass('error');
+        musicTimer = setTimeout(function () {
+          trackIndex += 1;
+          if (trackIndex < playlist.length) playNextTrack();
+          else stopCompletionMusic();
+        }, duration);
+      }
+      playNextTrack();
     }
 
     function updateLevelUI() {
@@ -166,11 +225,13 @@
       $('#result-message').text('Parabéns! Descobriste os segredos do Palácio dos Biscainhos.').removeClass('error');
       $('#puzzle').addClass('is-complete');
       if (currentLevel < levels.length - 1) $('#next-level').addClass('is-available');
-      playNotes([523, 659, 784, 1047]);
+      playCompletionMusic();
     }
 
     function recreate() {
       foundWords.clear();
+      stopCompletionMusic();
+      renderWords();
       updateProgress();
       $('#discovery-card').removeClass('is-visible');
       $('#discovery-text').text('Encontra uma palavra para revelar uma curiosidade sobre o Palácio dos Biscainhos.');
@@ -211,6 +272,7 @@
       soundEnabled = !soundEnabled;
       localStorage.setItem('palacio-em-letras-sound', soundEnabled ? 'on' : 'off');
       $(this).attr('aria-pressed', soundEnabled).text(soundEnabled ? 'Som: ligado' : 'Som: desligado');
+      if (!soundEnabled) stopCompletionMusic();
       if (soundEnabled) playNotes([523]);
     });
     $('#fullscreen').on('click', function () {

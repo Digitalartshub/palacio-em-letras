@@ -242,7 +242,6 @@
         }
 
         if (wordList.length === 0 && !isComplete) {
-          $('.puzzleSquare').addClass('complete');
           isComplete = true;
           if (typeof options.onComplete === 'function') {
             options.onComplete();
@@ -314,7 +313,6 @@
         }
       }
       if (wordList.length === solution.length && !isComplete) {
-        $('.puzzleSquare').addClass('complete');
         isComplete = true;
         if (typeof options.onComplete === 'function') {
           options.onComplete();

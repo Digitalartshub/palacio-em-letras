@@ -1,4 +1,4 @@
-const CACHE_NAME = 'palacio-em-letras-v2';
+const CACHE_NAME = 'palacio-em-letras-v4';
 const APP_SHELL = [
   './',
   './index.html',
@@ -9,7 +9,12 @@ const APP_SHELL = [
   './logo.png',
   './fachada-biscainhos.jpg',
   './icon.svg',
-  './manifest.webmanifest'
+  './manifest.webmanifest',
+  './creditos.html',
+  './bach-cello-suite-1.ogg',
+  './handel-water-music.ogg',
+  './bach-brandenburg-3.ogg',
+  './vivaldi-spring.ogg'
 ];
 
 self.addEventListener('install', event => {
