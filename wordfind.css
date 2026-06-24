@@ -1,0 +1,135 @@
+:root {
+  --ink: #2c3538;
+  --red: #ae0000;
+  --red-dark: #8e0000;
+  --paper: #f2eee7;
+  --paper-dark: #e4ddd1;
+  --gold: #a58b52;
+  --gold-dark: #524610;
+  --wine: #754536;
+  --line: #cfc5b6;
+  --found: #5e786e;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4.75rem;
+  padding: .7rem clamp(1.25rem, 4vw, 4rem);
+  color: var(--ink);
+  background: #fffefa;
+  border-top: .45rem solid var(--red);
+  border-bottom: 1px solid var(--line);
+}
+.logo { display: block; width: min(42rem, 68vw); max-height: 3.2rem; object-fit: contain; object-position: left center; }
+.section-label { margin: 0; color: var(--red); font-size: .68rem; font-weight: bold; letter-spacing: .14em; text-align: right; text-transform: uppercase; }
+
+#main { max-width: 84rem; margin: 0 auto; padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 1.6rem; }
+.intro-panel { display: grid; min-height: 9.5rem; color: var(--paper); background: var(--red); }
+.intro-copy { display: flex; flex-direction: column; justify-content: center; padding: 1.5rem clamp(1.5rem, 4vw, 3.6rem); }
+.eyebrow { margin: 0 0 .45rem; color: var(--gold); font-size: .65rem; font-weight: bold; letter-spacing: .15em; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: .45rem; font: normal clamp(2rem, 4.5vw, 3.7rem) Georgia, 'Times New Roman', serif; }
+.intro-copy > p:last-child { max-width: 31rem; margin-bottom: 0; color: #e6e0d5; line-height: 1.45; }
+.hero-art {
+  min-height: 8rem;
+  background: linear-gradient(90deg, #ae000000, #ae000055), url('fachada-biscainhos.jpg') center / cover;
+}
+
+.game-card {
+  display: grid;
+  gap: clamp(1.25rem, 3vw, 2.6rem);
+  margin-top: 1.25rem;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  background: #faf8f3;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 26px #292b2b12;
+}
+.board-panel { text-align: center; }
+.board-instruction { margin-bottom: .75rem; color: #65625d; font-size: .78rem; }
+#puzzle { display: inline-block; padding: clamp(.4rem, 1.3vw, .7rem); background: #fffefa; border: 1px solid var(--red); box-shadow: 5px 5px 0 var(--paper-dark); }
+#puzzle > div { display: flex; }
+.puzzleSquare {
+  width: clamp(1.85rem, 6.1vw, 3.15rem);
+  height: clamp(1.85rem, 6.1vw, 3.15rem);
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  font: bold clamp(.82rem, 2.5vw, 1.38rem) Arial, Helvetica, sans-serif;
+  cursor: crosshair;
+  touch-action: none;
+}
+.puzzleSquare:focus-visible { outline: 3px solid var(--red); outline-offset: -3px; }
+#puzzle .selected { background: #e2c978; }
+#puzzle .found { color: #fff; background: var(--found); }
+#puzzle .solved { color: #fff; background: var(--wine); }
+#puzzle .complete { background: var(--gold); }
+
+.word-panel { align-self: center; min-width: 0; }
+.panel-heading { padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
+.panel-heading .eyebrow { margin-bottom: .35rem; }
+h2 { margin-bottom: 0; font: normal clamp(1.5rem, 3vw, 2.15rem) Georgia, 'Times New Roman', serif; }
+#words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 1rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+#words li { min-width: 0; }
+input.word { width: 100%; padding: .45rem 0; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid #dfd7ca; font: bold clamp(.7rem, 1.7vw, .85rem) Arial, sans-serif; letter-spacing: .055em; }
+input.word.wordFound {
+  color: var(--red-dark);
+  font-weight: bold;
+  opacity: .72;
+  text-decoration: line-through solid var(--red) 2px;
+  text-decoration-skip-ink: none;
+}
+.progress { margin: .9rem 0 0; color: var(--red); font-size: .75rem; font-weight: bold; letter-spacing: .04em; }
+.discovery-card { display: none; margin-top: .8rem; padding: .85rem 1rem; background: #f4ede0; border-left: 3px solid var(--red); }
+.discovery-card.is-visible { display: block; animation: appear .25s ease-out; }
+.discovery-label { margin: 0 0 .35rem; color: var(--red); font-size: .63rem; font-weight: bold; letter-spacing: .13em; }
+.discovery-card p:last-child { margin-bottom: 0; font: italic .92rem/1.35 Georgia, serif; }
+.result-message { min-height: 1.25rem; margin: 1rem 0 .7rem; color: var(--found); font: italic .9rem Georgia, serif; }
+.result-message.error { color: var(--wine); }
+.actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; }
+button { min-height: 3rem; padding: .75rem .55rem; color: #fff; background: var(--red); border: 1px solid var(--red); font: bold .68rem Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+button:hover { background: var(--red-dark); }
+button.secondary { color: var(--ink); background: transparent; border-color: var(--ink); }
+button.secondary:hover { color: #fff; background: var(--red-dark); border-color: var(--red-dark); }
+#install-app { display: none; }
+#install-app.is-available { display: block; }
+.hint { margin: 1rem 0 0; color: #68645c; text-align: center; font: italic .92rem Georgia, serif; }
+footer { padding: 1.25rem; color: #f7eee2; text-align: center; background: var(--red); font: italic 1rem Georgia, serif; }
+footer span { margin-left: .4rem; color: var(--gold); font-size: .82rem; }
+
+#puzzle.is-complete { animation: celebrate .6s ease-out; }
+@keyframes appear { from { opacity: 0; transform: translateY(.35rem); } to { opacity: 1; transform: translateY(0); } }
+@keyframes celebrate { 50% { transform: scale(1.02); box-shadow: 0 0 0 8px #ae000025; } }
+
+@media (min-width: 700px) {
+  .intro-panel { grid-template-columns: minmax(0, 1.25fr) minmax(13rem, .75fr); }
+  .game-card { grid-template-columns: minmax(25rem, 1.15fr) minmax(17rem, .85fr); align-items: center; }
+  .board-instruction { text-align: left; }
+}
+
+@media (min-width: 1024px) and (min-height: 600px) {
+  #main { padding-top: 1.6rem; }
+  .intro-panel { min-height: 10.75rem; }
+  .game-card { margin-top: 1.5rem; }
+}
+
+@media (max-width: 390px) {
+  .site-header { min-height: 3.4rem; }
+  .section-label { display: none; }
+  #words { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
+}

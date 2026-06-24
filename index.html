@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ae0000">
+  <meta name="description" content="Sopa de letras interativa do Museu dos Biscainhos.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Museu dos Biscainhos — Sopa de Letras</title>
+  <link rel="stylesheet" href="wordfind.css">
+</head>
+<body>
+  <header class="site-header">
+    <img class="logo" src="logo.png" alt="República Portuguesa, Museus e Monumentos de Portugal e Museu dos Biscainhos">
+    <p class="section-label">Serviço Educativo</p>
+  </header>
+
+  <main id="main">
+    <section class="intro-panel">
+      <div class="intro-copy">
+        <p class="eyebrow">ATIVIDADE PARA EXPLORADORES</p>
+        <h1>Palácio em letras</h1>
+        <p>Descobre os espaços, artes e memórias do Museu dos Biscainhos.</p>
+      </div>
+      <div class="hero-art" role="img" aria-label="Fachada do Museu dos Biscainhos"></div>
+    </section>
+
+    <section class="game-card" aria-label="Sopa de letras">
+      <div class="board-panel">
+        <p class="board-instruction">Toca e arrasta para assinalar uma palavra.</p>
+        <div id="puzzle" aria-label="Tabuleiro da sopa de letras"></div>
+      </div>
+      <aside class="word-panel">
+        <div class="panel-heading">
+          <p class="eyebrow">DESAFIO</p>
+          <h2>Encontra as palavras</h2>
+        </div>
+        <ul id="words" aria-label="Palavras a encontrar">
+          <li><input class="word" value="BISCAINHOS" readonly aria-label="Biscainhos"></li>
+          <li><input class="word" value="PALACIO" readonly aria-label="Palácio"></li>
+          <li><input class="word" value="BRAGA" readonly aria-label="Braga"></li>
+          <li><input class="word" value="JARDINS" readonly aria-label="Jardins"></li>
+          <li><input class="word" value="AZULEJARIA" readonly aria-label="Azulejaria"></li>
+          <li><input class="word" value="ESCULTURA" readonly aria-label="Escultura"></li>
+          <li><input class="word" value="CAVALARICA" readonly aria-label="Cavalariça"></li>
+          <li><input class="word" value="COCHEIRA" readonly aria-label="Cocheira"></li>
+          <li><input class="word" value="COZINHA" readonly aria-label="Cozinha"></li>
+          <li><input class="word" value="SALAO" readonly aria-label="Salão"></li>
+        </ul>
+        <p id="progress" class="progress" aria-live="polite">0 de 10 palavras encontradas</p>
+        <section id="discovery-card" class="discovery-card" aria-live="polite">
+          <p class="discovery-label">CURIOSIDADE</p>
+          <p id="discovery-text">Encontra uma palavra para revelar uma curiosidade sobre o Palácio dos Biscainhos.</p>
+        </section>
+        <p id="result-message" class="result-message" aria-live="polite"></p>
+        <div class="actions">
+          <button id="new-puzzle" type="button">Novo desafio</button>
+          <button id="solve" type="button" class="secondary">Ver solução</button>
+          <button id="fullscreen" type="button" class="secondary">Ecrã inteiro</button>
+          <button id="install-app" type="button" class="secondary">Instalar app</button>
+        </div>
+      </aside>
+    </section>
+
+    <p class="hint">As palavras podem surgir na horizontal, vertical ou diagonal.</p>
+  </main>
+
+  <footer>Descobre, observa, imagina. <span>Museu dos Biscainhos · Braga</span></footer>
+
+  <script src="jquery-1.7.1.min.js"></script>
+  <script src="wordfind.js"></script>
+  <script src="wordfindgame.js"></script>
+  <script>
+    let game;
+    const foundWords = new Set();
+    const facts = {
+      biscainhos: 'O palácio começou a formar-se no século XVII e evoluiu ao longo dos séculos XVIII e XIX.',
+      palacio: 'O próprio edifício é a peça central do programa museográfico do Museu dos Biscainhos.',
+      braga: 'O Museu dos Biscainhos localiza-se no centro histórico da cidade de Braga.',
+      jardins: 'Os jardins históricos valorizam a arquitetura e a escultura setecentistas.',
+      azulejaria: 'A azulejaria é um dos elementos de destaque nos interiores ornamentais do palácio.',
+      escultura: 'A escultura integra tanto os interiores como os jardins do conjunto patrimonial.',
+      cavalarica: 'A cavalariça é um dos espaços funcionais do piso térreo do palácio.',
+      cocheira: 'A cocheira recorda a organização prática de uma grande casa senhorial.',
+      cozinha: 'A cozinha integra os espaços funcionais situados no piso térreo.',
+      salao: 'O Salão Nobre, no andar nobre, era um espaço de sociabilização e representação.'
+    };
+
+    function updateProgress() {
+      const total = $('input.word').length;
+      $('#progress').text(`${foundWords.size} de ${total} palavras encontradas`);
+    }
+
+    function showDiscovery(word) {
+      if (foundWords.has(word)) return;
+      foundWords.add(word);
+      $('#discovery-text').text(facts[word] || 'Descobriste mais um elemento do Museu dos Biscainhos.');
+      $('#discovery-card').addClass('is-visible');
+      updateProgress();
+    }
+
+    function completePuzzle() {
+      $('#result-message').text('Parabéns! Descobriste os segredos do Palácio dos Biscainhos.').removeClass('error');
+      $('#puzzle').addClass('is-complete');
+    }
+
+    function recreate() {
+      foundWords.clear();
+      updateProgress();
+      $('#discovery-card').removeClass('is-visible');
+      $('#discovery-text').text('Encontra uma palavra para revelar uma curiosidade sobre o Palácio dos Biscainhos.');
+      $('#puzzle').removeClass('is-complete');
+      $('#result-message').text('Boa descoberta!').removeClass('error');
+      try {
+        game = new WordFindGame('#puzzle', {
+          allowedMissingWords: 0,
+          maxGridGrowth: 10,
+          fillBlanks: true,
+          maxAttempts: 300,
+          onWordFound: showDiscovery,
+          onComplete: completePuzzle
+        });
+      } catch (error) {
+        $('#result-message').text('Não foi possível criar o desafio.').addClass('error');
+      }
+    }
+
+    recreate();
+    $('#new-puzzle').on('click', recreate);
+    $('#solve').on('click', function () { game.solve(); });
+    $('#fullscreen').on('click', function () {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    });
+    $(document).on('fullscreenchange', function () {
+      $('#fullscreen').text(document.fullscreenElement ? 'Sair do ecrã' : 'Ecrã inteiro');
+    });
+
+    let installPrompt;
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      installPrompt = event;
+      $('#install-app').addClass('is-available');
+    });
+    $('#install-app').on('click', async function () {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      await installPrompt.userChoice;
+      installPrompt = null;
+      $('#install-app').removeClass('is-available');
+    });
+    window.addEventListener('appinstalled', function () {
+      $('#install-app').removeClass('is-available');
+    });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+  </script>
+</body>
+</html>
