@@ -13,11 +13,16 @@
 </head>
 <body>
   <header class="site-header">
-    <div>
+    <div class="brand-title">
       <p class="site-kicker">Museu dos Biscainhos · Serviço Educativo</p>
       <h1>Palácio em letras</h1>
+      <p class="site-subtitle">Ficha de exploração digital</p>
     </div>
-    <p class="section-label">Jogo educativo</p>
+    <div class="section-label">
+      <span id="level-code">A1</span>
+      <strong>Jogo educativo</strong>
+      <em>Museu dos Biscainhos</em>
+    </div>
   </header>
 
   <main id="main">
@@ -94,6 +99,7 @@
   <script>
     let game;
     let currentLevel = 0;
+    let highestUnlockedLevel = 0;
     let soundEnabled = localStorage.getItem('palacio-em-letras-sound') !== 'off';
     const completionAudio = new Audio();
     let musicTimer;
@@ -103,19 +109,19 @@
         title: 'Nível 1 · Primeiros passos',
         description: 'Encontra palavras em linhas horizontais e verticais.',
         orientations: ['horizontal', 'vertical'],
-        words: ['braga', 'jardins', 'cozinha', 'salao']
+        words: ['braga', 'jardins', 'cozinha', 'salao', 'patio', 'torre', 'arte']
       },
       {
         title: 'Nível 2 · Olhar atento',
         description: 'Agora as palavras também podem surgir na diagonal.',
         orientations: ['horizontal', 'vertical', 'diagonal', 'diagonalBack'],
-        words: ['palacio', 'azulejaria', 'escultura']
+        words: ['palacio', 'azulejaria', 'escultura', 'jardim', 'musica', 'jantar', 'nobre']
       },
       {
         title: 'Nível 3 · Mestre explorador',
         description: 'Todas as direções são possíveis, incluindo palavras invertidas.',
         orientations: ['horizontal', 'horizontalBack', 'vertical', 'verticalUp', 'diagonal', 'diagonalBack', 'diagonalUp', 'diagonalUpBack'],
-        words: ['biscainhos', 'cavalarica', 'cocheira']
+        words: ['biscainhos', 'cavalarica', 'cocheira', 'azulejos', 'escadaria', 'memoria', 'barroco']
       }
     ];
     const levelMusic = [
@@ -134,7 +140,18 @@
       cavalarica: 'A cavalariça é um dos espaços funcionais do piso térreo do palácio.',
       cocheira: 'A cocheira recorda a organização prática de uma grande casa senhorial.',
       cozinha: 'A cozinha integra os espaços funcionais situados no piso térreo.',
-      salao: 'O Salão Nobre, no andar nobre, era um espaço de sociabilização e representação.'
+      salao: 'O Salão Nobre, no andar nobre, era um espaço de sociabilização e representação.',
+      patio: 'O pátio organizava a entrada e a circulação de uma grande casa senhorial.',
+      torre: 'A Sala da Torre faz parte do percurso do andar nobre.',
+      arte: 'As coleções do museu cruzam arte, artes decorativas e modos de vida.',
+      jardim: 'O jardim histórico prolonga a experiência do palácio para o exterior.',
+      musica: 'A Sala de Música recorda práticas de convívio e representação social.',
+      jantar: 'A Sala de Jantar mostra como a casa senhorial também era palco de cerimónia.',
+      nobre: 'O andar nobre reunia os espaços de maior aparato e representação.',
+      azulejos: 'A Sala dos Azulejos destaca um dos elementos decorativos mais marcantes do museu.',
+      escadaria: 'A escadaria monumental prepara a passagem para os espaços nobres.',
+      memoria: 'O museu preserva memórias de arquitetura, quotidiano e artes decorativas.',
+      barroco: 'O Barroco marca muitos detalhes decorativos associados ao palácio.'
     };
 
     function updateProgress() {
@@ -208,7 +225,16 @@
       const level = levels[currentLevel];
       $('#level-title').text(level.title);
       $('#level-description').text(level.description);
+      $('#level-code').text('A' + (currentLevel + 1));
       $('.level-button').removeClass('is-active').filter('[data-level="' + currentLevel + '"]').addClass('is-active');
+      $('.level-button').each(function () {
+        const levelIndex = Number($(this).data('level'));
+        const isLocked = levelIndex > highestUnlockedLevel;
+        $(this)
+          .prop('disabled', isLocked)
+          .attr('aria-disabled', isLocked)
+          .toggleClass('is-locked', isLocked);
+      });
       $('#next-level').text(currentLevel < levels.length - 1 ? 'Próximo nível' : 'Todos concluídos');
     }
 
@@ -224,7 +250,11 @@
     function completePuzzle() {
       $('#result-message').text('Parabéns! Descobriste os segredos do Palácio dos Biscainhos.').removeClass('error');
       $('#puzzle').addClass('is-complete');
-      if (currentLevel < levels.length - 1) $('#next-level').addClass('is-available');
+      if (currentLevel < levels.length - 1) {
+        highestUnlockedLevel = Math.max(highestUnlockedLevel, currentLevel + 1);
+        updateLevelUI();
+        $('#next-level').addClass('is-available');
+      }
       playCompletionMusic();
     }
 
@@ -257,7 +287,12 @@
     $('#new-puzzle').on('click', recreate);
     $('#solve').on('click', function () { game.solve(); });
     $('.level-button').on('click', function () {
-      currentLevel = Number($(this).data('level'));
+      const requestedLevel = Number($(this).data('level'));
+      if (requestedLevel > highestUnlockedLevel) {
+        $('#result-message').text('Termina primeiro o nível anterior para desbloquear este desafio.').addClass('error');
+        return;
+      }
+      currentLevel = requestedLevel;
       updateLevelUI();
       recreate();
     });

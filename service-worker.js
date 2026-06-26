@@ -1,4 +1,4 @@
-const CACHE_NAME = 'palacio-em-letras-v4';
+const CACHE_NAME = 'palacio-em-letras-v7';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const APP_SHELL = [
   './wordfindgame.js',
   './logo.png',
   './fachada-biscainhos.jpg',
+  './acanto.svg',
   './icon.svg',
   './manifest.webmanifest',
   './creditos.html',

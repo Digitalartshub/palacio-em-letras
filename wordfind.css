@@ -159,6 +159,18 @@ h2 { margin-bottom: 0; font: normal clamp(1.5rem, 3vw, 2.15rem) Georgia, 'Times 
 .levels { display: flex; gap: .45rem; margin: .9rem 0 .2rem; }
 .level-button { display: grid; width: 2rem; min-height: 2rem; padding: 0; color: var(--ink); background: transparent; border-color: var(--line); border-radius: 50%; font-size: .75rem; place-items: center; }
 .level-button.is-active, .level-button:hover { color: #fff; background: var(--red); border-color: var(--red); }
+.level-button.is-locked {
+  color: #9a948b;
+  background: #eee8dd;
+  border-color: #ded5c7;
+  cursor: not-allowed;
+  opacity: .72;
+}
+.level-button.is-locked:hover {
+  color: #9a948b;
+  background: #eee8dd;
+  border-color: #ded5c7;
+}
 #words { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 1rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 #words li { min-width: 0; }
 input.word { width: 100%; padding: .45rem 0; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid #dfd7ca; font: bold clamp(.7rem, 1.7vw, .85rem) Arial, sans-serif; letter-spacing: .055em; }
