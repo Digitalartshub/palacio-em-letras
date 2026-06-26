@@ -2,7 +2,7 @@
   --ink: #2c3538;
   --red: #ae0000;
   --red-dark: #8e0000;
-  --paper: #f2eee7;
+  --paper: #f7f3ec;
   --paper-dark: #e4ddd1;
   --gold: #a58b52;
   --gold-dark: #524610;
@@ -18,34 +18,91 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--ink);
-  background: var(--paper);
+  background:
+    radial-gradient(circle at top left, #ffffff 0 20rem, transparent 20.1rem),
+    linear-gradient(180deg, #fff 0, var(--paper) 34rem);
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .site-header {
+  position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
-  min-height: 6.2rem;
-  padding: .9rem clamp(1.25rem, 4vw, 4rem);
+  gap: clamp(1rem, 3vw, 3rem);
+  max-width: 84rem;
+  min-height: 9.4rem;
+  margin: 0 auto;
+  padding: 1.4rem clamp(1rem, 3vw, 2.5rem) 1rem;
+  color: var(--ink);
+  background: #fff;
+}
+.site-header::before {
+  position: absolute;
+  top: .55rem;
+  left: clamp(.6rem, 2vw, 1.45rem);
+  width: clamp(4.8rem, 10vw, 7.4rem);
+  height: clamp(4.8rem, 10vw, 7.4rem);
+  background: url('acanto.svg') center / contain no-repeat;
+  content: "";
+  opacity: .72;
+  transform: rotate(-10deg);
+}
+.brand-title {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: clamp(2.3rem, 7vw, 7rem);
+}
+.site-kicker { margin: 0 0 .25rem; color: var(--red); font-size: .64rem; font-weight: bold; letter-spacing: .14em; text-transform: uppercase; }
+.site-header h1 { margin: 0; font: normal clamp(2.25rem, 5.2vw, 4.3rem) Georgia, 'Times New Roman', serif; letter-spacing: -.03em; }
+.site-subtitle { margin: .15rem 0 0; color: #68625a; font: normal clamp(1rem, 2vw, 1.35rem) Georgia, 'Times New Roman', serif; letter-spacing: .03em; }
+.section-label {
+  display: grid;
+  align-content: center;
+  min-width: min(24rem, 42vw);
+  margin: 0;
+  padding: 1.15rem 1.35rem;
   color: #fffefa;
   background: var(--red);
-  border-bottom: 1px solid var(--red-dark);
+  box-shadow: inset 0 -5px 0 #ffffff40;
 }
-.site-kicker { margin: 0 0 .25rem; color: #f1d895; font-size: .64rem; font-weight: bold; letter-spacing: .14em; text-transform: uppercase; }
-.site-header h1 { margin: 0; font: normal clamp(1.85rem, 4vw, 3rem) Georgia, 'Times New Roman', serif; }
-.section-label { margin: 0; color: #f1d895; font-size: .68rem; font-weight: bold; letter-spacing: .14em; text-align: right; text-transform: uppercase; }
+.section-label span { justify-self: end; font: normal 1.45rem Georgia, serif; }
+.section-label strong { margin-top: .15rem; font-size: .73rem; letter-spacing: .14em; text-transform: uppercase; }
+.section-label em { margin-top: .5rem; color: #f1d895; font: normal 1.35rem Georgia, serif; letter-spacing: .04em; }
 
 #main { max-width: 84rem; margin: 0 auto; padding: 1.25rem clamp(1rem, 3vw, 2.5rem) 1.6rem; }
-.intro-panel { display: grid; min-height: 9.5rem; color: var(--paper); background: var(--red); }
+.intro-panel {
+  position: relative;
+  display: grid;
+  min-height: 9.5rem;
+  overflow: hidden;
+  color: var(--ink);
+  background: #fff;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.intro-panel::before {
+  position: absolute;
+  right: 1.1rem;
+  bottom: .55rem;
+  color: #ae000012;
+  content: "B";
+  font: normal 6rem Georgia, serif;
+}
 .intro-copy { display: flex; flex-direction: column; justify-content: center; padding: 1.5rem clamp(1.5rem, 4vw, 3.6rem); }
-.eyebrow { margin: 0 0 .45rem; color: var(--gold); font-size: .65rem; font-weight: bold; letter-spacing: .15em; }
+.eyebrow { margin: 0 0 .45rem; color: var(--red); font-size: .65rem; font-weight: bold; letter-spacing: .15em; }
 h1, h2, p { margin-top: 0; }
 h1 { margin-bottom: .45rem; font: normal clamp(2rem, 4.5vw, 3.7rem) Georgia, 'Times New Roman', serif; }
-.intro-copy > p:last-child { max-width: 31rem; margin-bottom: 0; color: #e6e0d5; line-height: 1.45; }
+.intro-copy > p:last-child { max-width: 31rem; margin-bottom: 0; color: #68625a; line-height: 1.45; }
 .hero-art {
   min-height: 8rem;
-  background: linear-gradient(90deg, #ae000000, #ae000055), url('fachada-biscainhos.jpg') center / cover;
+  background:
+    linear-gradient(90deg, #ffffff 0, #ffffff00 25%),
+    linear-gradient(0deg, #ae000040, #ae000010),
+    url('fachada-biscainhos.jpg') center / cover;
 }
 
 .game-card {
@@ -55,11 +112,28 @@ h1 { margin-bottom: .45rem; font: normal clamp(2rem, 4.5vw, 3.7rem) Georgia, 'Ti
   padding: clamp(1rem, 3vw, 2.25rem);
   background: #faf8f3;
   border: 1px solid var(--line);
-  box-shadow: 0 10px 26px #292b2b12;
+  box-shadow: 0 18px 40px #292b2b14;
 }
 .board-panel { text-align: center; }
 .board-instruction { margin-bottom: .75rem; color: #65625d; font-size: .78rem; }
-#puzzle { display: inline-block; padding: clamp(.4rem, 1.3vw, .7rem); background: #fffefa; border: 1px solid var(--red); box-shadow: 5px 5px 0 var(--paper-dark); }
+.puzzle-frame {
+  position: relative;
+  display: inline-block;
+  padding: clamp(.7rem, 2vw, 1.2rem);
+  background: #bd9c5d;
+  border: 5px double #73551d;
+  box-shadow: 0 0 0 3px #e8d9b8, 0 0 0 5px #8c691f, 8px 10px 0 #2c353822;
+}
+.puzzle-frame::before,
+.puzzle-frame::after { position: absolute; z-index: 1; width: 1.5rem; height: 1.5rem; border: 3px solid #73551d; content: ''; pointer-events: none; }
+.puzzle-frame::before { top: .32rem; left: .32rem; border-right: 0; border-bottom: 0; }
+.puzzle-frame::after { right: .32rem; bottom: .32rem; border-top: 0; border-left: 0; }
+.frame-corner { position: absolute; z-index: 2; color: #73551d; font: 1.7rem Georgia, serif; line-height: 1; pointer-events: none; }
+.top-left { top: -.05rem; left: -.05rem; }
+.top-right { top: -.05rem; right: -.05rem; transform: scaleX(-1); }
+.bottom-left { bottom: -.05rem; left: -.05rem; transform: scaleY(-1); }
+.bottom-right { right: -.05rem; bottom: -.05rem; transform: scale(-1); }
+#puzzle { position: relative; z-index: 0; display: inline-block; padding: clamp(.4rem, 1.3vw, .7rem); background: #fffefa; border: 1px solid #73551d; box-shadow: inset 0 0 0 3px #ecdfc3; }
 #puzzle > div { display: flex; }
 .puzzleSquare {
   width: clamp(1.85rem, 6.1vw, 3.15rem);
@@ -75,9 +149,8 @@ h1 { margin-bottom: .45rem; font: normal clamp(2rem, 4.5vw, 3.7rem) Georgia, 'Ti
 }
 .puzzleSquare:focus-visible { outline: 3px solid var(--red); outline-offset: -3px; }
 #puzzle .selected { background: #e2c978; }
-#puzzle .found { color: #fff; background: var(--found); }
+#puzzle .found { color: #fff; background: var(--red); box-shadow: 0 2px 0 var(--red-dark); }
 #puzzle .solved { color: #fff; background: var(--wine); }
-#puzzle .complete { background: var(--gold); }
 
 .word-panel { align-self: center; min-width: 0; }
 .panel-heading { padding-bottom: .9rem; border-bottom: 1px solid var(--line); }
@@ -117,6 +190,9 @@ footer { padding: 1.75rem 1.25rem 1.25rem; color: var(--ink); text-align: center
 .footer-logo { display: block; width: min(42rem, 86vw); max-height: 4rem; margin: 0 auto 1.1rem; object-fit: contain; }
 footer p { margin: 0; }
 footer span { margin-left: .4rem; color: var(--gold); font-size: .82rem; }
+footer a, .credits-page a { color: var(--red); }
+.credits-page .game-card { grid-template-columns: 1fr; max-width: 52rem; margin-inline: auto; }
+.credits-page li { margin-bottom: 1rem; line-height: 1.5; }
 
 #puzzle.is-complete { animation: celebrate .6s ease-out; }
 @keyframes appear { from { opacity: 0; transform: translateY(.35rem); } to { opacity: 1; transform: translateY(0); } }
